@@ -8,6 +8,7 @@ import (
 	"github.com/6ivkin/test.git/internal/reader"
 	"github.com/doug-martin/goqu/v9"
 	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -69,6 +70,49 @@ func (r *ReaderRepository) Create(ctx context.Context, entity reader.Reader) (re
 		}
 
 		return reader.Reader{}, fmt.Errorf("create reader: %w", err)
+	}
+
+	return result, nil
+}
+
+func (r *ReaderRepository) GetByID(ctx context.Context, id string) (reader.Reader, error) {
+	query, args, err := goqu.Dialect("postgres").From("readers").
+		Select(
+			"id",
+			"full_name",
+			"email",
+			"is_active",
+			"created_at",
+			"updated_at",
+		).Where(
+		goqu.Ex{
+			"id": id,
+		},
+	).Prepared(true).
+		ToSQL()
+
+	if err != nil {
+		return reader.Reader{},
+			fmt.Errorf("build get reader query: %w", err)
+	}
+
+	var result reader.Reader
+
+	err = r.pool.QueryRow(ctx, query, args...).Scan(
+		&result.ID,
+		&result.FullName,
+		&result.Email,
+		&result.IsActive,
+		&result.CreatedAt,
+		&result.UpdatedAt,
+	)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return reader.Reader{}, reader.ErrReaderNotFound
+		}
+
+		return reader.Reader{}, fmt.Errorf("get ready by id: %w", err)
 	}
 
 	return result, nil

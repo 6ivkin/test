@@ -52,3 +52,13 @@ func (s *Service) Create(ctx context.Context, input CreateInput) (Reader, error)
 		},
 	)
 }
+
+func (s *Service) GetByID(ctx context.Context, id string) (Reader, error) {
+	id = strings.TrimSpace(id)
+
+	if id == "" {
+		return Reader{}, ErrReaderNotFound
+	}
+
+	return s.repository.GetByID(ctx, id)
+}

@@ -14,5 +14,10 @@ func NewRouter(readerHandler *handler.ReaderHandler) http.Handler {
 		readerHandler.Create,
 	)
 
+	mux.HandleFunc(
+		"GET /api/v1/readers/{id}",
+		readerHandler.GetByID,
+	)
+
 	return mux
 }

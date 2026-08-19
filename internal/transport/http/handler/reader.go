@@ -101,6 +101,23 @@ func (h *ReaderHandler) Create(
 	)
 }
 
+func (h *ReaderHandler) GetByID(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+
+	result, err := h.service.GetByID(r.Context(), id)
+	if err != nil {
+		switch {
+		case errors.Is(err, reader.ErrReaderNotFound):
+			writeJSON(w, http.StatusNotFound, errorResponse{Error: err.Error()})
+		default:
+			writeJSON(w, http.StatusInternalServerError, errorResponse{Error: "internal server error"})
+		}
+		return
+	}
+
+	writeJSON(w, http.StatusOK, result)
+}
+
 func writeJSON(
 	w http.ResponseWriter,
 	status int,
