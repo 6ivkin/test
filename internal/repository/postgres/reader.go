@@ -13,6 +13,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+const (
+	postgresUniqueViolation = "23505"
+	readersEmailConstraint  = "uq_readers_email"
+)
+
 type ReaderRepository struct {
 	pool *pgxpool.Pool
 }
@@ -63,8 +68,8 @@ func (r *ReaderRepository) Create(ctx context.Context, entity reader.Reader) (re
 		var pgErr *pgconn.PgError
 
 		if errors.As(err, &pgErr) &&
-			pgErr.Code == "23505" &&
-			pgErr.ConstraintName == "readers_email_key" {
+			pgErr.Code == postgresUniqueViolation &&
+			pgErr.ConstraintName == readersEmailConstraint {
 			return reader.Reader{},
 				reader.ErrEmailAlreadyExsists
 		}
