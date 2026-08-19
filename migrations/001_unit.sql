@@ -1,5 +1,3 @@
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
 CREATE TABLE
 	readers (
 		id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
@@ -14,6 +12,7 @@ CREATE TABLE
 	books (
 		id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
 		title VARCHAR(255) NOT NULL,
+		author VARCHAR(255) NOT NULL,
 		isbn VARCHAR(32),
 		inventory_number VARCHAR(100) NOT NULL UNIQUE,
 		status VARCHAR(30) NOT NULL DEFAULT 'available',
