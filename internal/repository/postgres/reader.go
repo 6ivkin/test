@@ -122,3 +122,37 @@ func (r *ReaderRepository) GetByID(ctx context.Context, id string) (reader.Reade
 
 	return result, nil
 }
+
+func (r *ReaderRepository) Deactivate(ctx context.Context, id string) error {
+	query, args, err := goqu.
+		Dialect("postgres").
+		Update("readers").
+		Set(
+			goqu.Record{
+				"is_active":  false,
+				"updated_at": goqu.L("NOW()"),
+			},
+		).
+		Where(
+			goqu.Ex{
+				"id": id,
+			},
+		).
+		Prepared(true).
+		ToSQL()
+
+	if err != nil {
+		return fmt.Errorf("build deactivate reader query: %w", err)
+	}
+
+	commandTag, err := r.pool.Exec(ctx, query, args...)
+	if err != nil {
+		return fmt.Errorf("deactiveted reader: %w", err)
+	}
+
+	if commandTag.RowsAffected() == 0 {
+		return reader.ErrReaderNotFound
+	}
+
+	return nil
+}

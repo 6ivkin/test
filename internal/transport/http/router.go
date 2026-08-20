@@ -19,5 +19,10 @@ func NewRouter(readerHandler *handler.ReaderHandler) http.Handler {
 		readerHandler.GetByID,
 	)
 
+	mux.HandleFunc(
+		"DELETE /api/v1/readers/{id}",
+		readerHandler.Deactivate,
+	)
+
 	return mux
 }

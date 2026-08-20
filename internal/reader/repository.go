@@ -8,6 +8,7 @@ import (
 var (
 	ErrEmailAlreadyExsists = errors.New("reader with this email already exsists")
 	ErrReaderNotFound      = errors.New("reader not found")
+	ErrInvalidReaderID     = errors.New("invalid reader id")
 )
 
 type Repository interface {
@@ -20,4 +21,9 @@ type Repository interface {
 		ctx context.Context,
 		id string,
 	) (Reader, error)
+
+	Deactivate(
+		ctx context.Context,
+		id string,
+	) error
 }
