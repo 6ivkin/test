@@ -2,17 +2,28 @@ package reader
 
 import (
 	"context"
-	"errors"
 	"net/mail"
 	"strings"
 
 	"github.com/google/uuid"
 )
 
-var (
-	ErrInvalidFullName = errors.New("full name is required")
-	ErrInvalidEmail    = errors.New("invalid email")
-)
+type Repository interface {
+	Create(
+		ctx context.Context,
+		reader Reader,
+	) (Reader, error)
+
+	GetByID(
+		ctx context.Context,
+		id string,
+	) (Reader, error)
+
+	Deactivate(
+		ctx context.Context,
+		id string,
+	) error
+}
 
 type CreateInput struct {
 	FullName string

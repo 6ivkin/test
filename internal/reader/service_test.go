@@ -269,10 +269,10 @@ func TestService_Create(t *testing.T) {
 					ctx context.Context,
 					reader Reader,
 				) (Reader, error) {
-					return Reader{}, ErrEmailAlreadyExsists
+					return Reader{}, ErrEmailAlreadyExists
 				},
 			},
-			wantErr: ErrEmailAlreadyExsists,
+			wantErr: ErrEmailAlreadyExists,
 		},
 	}
 

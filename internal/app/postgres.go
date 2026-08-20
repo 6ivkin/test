@@ -1,4 +1,4 @@
-package database
+package app
 
 import (
 	"context"
@@ -9,7 +9,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func NewPostgres(ctx context.Context, dsn string) (*pgxpool.Pool, error) {
+const postgresPingTimeout = 5 * time.Second
+
+func newPostgres(ctx context.Context, dsn string) (*pgxpool.Pool, error) {
 	if dsn == "" {
 		return nil, errors.New("db url is empty")
 	}
