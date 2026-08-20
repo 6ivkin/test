@@ -5,6 +5,8 @@ import (
 	"errors"
 	"net/mail"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 var (
@@ -56,9 +58,27 @@ func (s *Service) Create(ctx context.Context, input CreateInput) (Reader, error)
 func (s *Service) GetByID(ctx context.Context, id string) (Reader, error) {
 	id = strings.TrimSpace(id)
 
-	if id == "" {
-		return Reader{}, ErrReaderNotFound
+	if err := validReaderID(id); err != nil {
+		return Reader{}, err
 	}
 
 	return s.repository.GetByID(ctx, id)
+}
+
+func (s *Service) Deactivate(ctx context.Context, id string) error {
+	id = strings.TrimSpace(id)
+
+	if err := validReaderID(id); err != nil {
+		return err
+	}
+
+	return s.repository.Deactivate(ctx, id)
+}
+
+func validReaderID(id string) error {
+	if _, err := uuid.Parse(id); err != nil {
+		return ErrInvalidReaderID
+	}
+
+	return nil
 }
