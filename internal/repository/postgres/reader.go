@@ -71,7 +71,7 @@ func (r *ReaderRepository) Create(ctx context.Context, entity reader.Reader) (re
 			pgErr.Code == postgresUniqueViolation &&
 			pgErr.ConstraintName == readersEmailConstraint {
 			return reader.Reader{},
-				reader.ErrEmailAlreadyExsists
+				reader.ErrEmailAlreadyExists
 		}
 
 		return reader.Reader{}, fmt.Errorf("create reader: %w", err)

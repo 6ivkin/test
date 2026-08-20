@@ -71,7 +71,7 @@ func (h *ReaderHandler) Create(
 				},
 			)
 
-		case errors.Is(err, reader.ErrEmailAlreadyExsists):
+		case errors.Is(err, reader.ErrEmailAlreadyExists):
 
 			writeJSON(
 				w,
