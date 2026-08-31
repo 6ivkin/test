@@ -100,8 +100,13 @@ func New(
 	readerHandler :=
 		handler.NewReaderHandler(readerService)
 
+	logger := newLogger()
+
 	router :=
-		httptransport.NewRouter(readerHandler)
+		httptransport.NewRouter(
+			readerHandler,
+			logger,
+		)
 
 	server :=
 		httptransport.NewServer(
