@@ -1,0 +1,197 @@
+openapi: 3.0.3
+
+info:
+  title: Library API
+  version: 1.0.0
+  description: API for library management
+
+paths:
+  /api/v1/readers:
+    post:
+      tags:
+        - Readers
+      summary: Create reader
+      operationId: createReader
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReaderRequest'
+
+      responses:
+        '201':
+          description: Reader successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reader'
+
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+        '409':
+          description: Reader with this email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/readers/{id}:
+    parameters:
+      - $ref: '#/components/parameters/ReaderID'
+
+    get:
+      tags:
+        - Readers
+      summary: Get reader by ID
+      operationId: getReaderByID
+
+      responses:
+        '200':
+          description: Reader found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reader'
+
+        '400':
+          description: Invalid reader ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+        '404':
+          description: Reader not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags:
+        - Readers
+      summary: Deactivate reader
+      operationId: deactivateReader
+
+      responses:
+        '204':
+          description: Reader successfully deactivated
+
+        '400':
+          description: Invalid reader ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+        '404':
+          description: Reader not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  parameters:
+    ReaderID:
+      name: id
+      in: path
+      required: true
+      description: Reader identifier
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    CreateReaderRequest:
+      type: object
+      additionalProperties: false
+
+      required:
+        - full_name
+        - email
+
+      properties:
+        full_name:
+          type: string
+          minLength: 1
+          maxLength: 255
+
+        email:
+          type: string
+          format: email
+          minLength: 3
+          maxLength: 255
+
+    Reader:
+      type: object
+
+      required:
+        - id
+        - full_name
+        - email
+        - is_active
+        - created_at
+        - updated_at
+
+      properties:
+        id:
+          type: string
+          format: uuid
+
+        full_name:
+          type: string
+
+        email:
+          type: string
+          format: email
+
+        is_active:
+          type: boolean
+
+        created_at:
+          type: string
+          format: date-time
+
+        updated_at:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+
+      required:
+        - error
+
+      properties:
+        error:
+          type: string
